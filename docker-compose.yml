@@ -94,7 +94,6 @@ services:
             # primeira subida; o DeskFlow monta o mesmo volume e vê INIs, RPO,
             # protheus_data e console.log pelos mesmos caminhos.
             - protheus12:/protheus12
-            - ./volume/data/system_temp:/protheus12/protheus_data/system_temp
         devices:
             - "/dev/mem:/dev/mem"
         cap_add:
@@ -133,7 +132,6 @@ services:
             - APPSERVER_DIR=appserver-exclusivo
         volumes:
             - protheus12:/protheus12
-            - ./volume/data/system_temp:/protheus12/protheus_data/system_temp
         devices:
             - "/dev/mem:/dev/mem"
         cap_add:
