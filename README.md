@@ -1,8 +1,6 @@
 # docker-protheus-2610
 Protheus 12.1.2610 em containers Docker (Postgres, DBAccess, License Server 3.7.2, AppServer 26.3, SmartView 3.11), **gerenciado pelo DeskFlow Control** — o painel web que sobe junto e controla todos os serviços.
 
-> Em preparação: as imagens `emebatista/*-2610` ainda não foram publicadas no Docker Hub. Enquanto isso, use o repositório da versão anterior: https://github.com/emebatista/docker-protheus-2510
-
 📘 **Guia completo em PDF** (download, primeira subida, DeskFlow, Protheus, SmartView, operação e problemas comuns): [docs/Guia-Protheus-2610-Docker-DeskFlow.pdf](docs/Guia-Protheus-2610-Docker-DeskFlow.pdf)
 
 Procedimentos:
