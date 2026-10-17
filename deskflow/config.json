@@ -1,56 +1,29 @@
 [
   {
-    "id": "1",
-    "name": "Protheus 2610 (Docker)",
-    "topology_type": "Padrão",
+    "ad_domain": "",
+    "ad_enabled": false,
+    "ad_server": "",
+    "business_criticality": "medium",
     "business_name": "Protheus 12.1.2610 em containers",
     "business_owner": "TI",
-    "business_criticality": "medium",
     "business_tags": [
       "Protheus"
     ],
-    "services": [
-      "postgres-2610.sh",
-      "license-2610.sh",
-      "dbaccess-2610.sh",
-      "protheus-2610.sh",
-      "protheus-2610-exclusivo.sh",
-      "smartview-2610.sh"
-    ],
-    "services_always_on": [],
-    "services_refresh_schedule": [],
-    "exclusive_mode_services": [
-      "protheus-2610-exclusivo.sh"
-    ],
-    "webservices": [],
+    "compiler_environment": "patch_apply",
     "debug_services": [
       "protheus-2610.sh"
     ],
     "environments": [
       "P2610",
-      "P2610D"
+      "P2610_COMPILA",
+      "P2610_DEBUG"
     ],
-    "path_to_ini": [
-      "/protheus12/bin/appserver/appserver.ini",
-      "/protheus12/bin/appserver-exclusivo/appserver.ini"
+    "exclusive_mode_services": [
+      "protheus-2610-exclusivo.sh"
     ],
-    "path_to_compiler": "",
-    "compiler_environment": "PATCH_APPLY",
-    "path_to_compiler_location": "",
-    "server_compiler": "",
     "genpatch_command": "",
-    "path_to_files": [
-      {
-        "id": "1",
-        "name": "console.log (protheus)",
-        "path": "/protheus12/bin/appserver/console.log"
-      },
-      {
-        "id": "2",
-        "name": "dbaccess.log",
-        "path": "/dbaccess/multi/dbaccess.log"
-      }
-    ],
+    "id": "1",
+    "includes": "/protheus12/bin/appserver_deskflow/includes",
     "links": [
       {
         "id": "1",
@@ -78,19 +51,125 @@
         "url": "http://localhost:8020"
       }
     ],
+    "name": "Protheus Teste",
+    "path_to_compiler": "/protheus12/bin/appserver_deskflow/appserver.ini",
+    "path_to_compiler_location": "",
+    "path_to_files": [
+      {
+        "id": "1",
+        "name": "console.log (protheus)",
+        "path": "/protheus12/bin/appserver/console.log"
+      },
+      {
+        "id": "2",
+        "name": "dbaccess.log",
+        "path": "/dbaccess/multi/dbaccess.log"
+      }
+    ],
+    "path_to_ini": [
+      "/protheus12/bin/appserver/appserver.ini",
+      "/protheus12/bin/appserver-exclusivo/appserver.ini"
+    ],
     "properties": [
       {
         "environment": "P2610",
         "history": 3
       },
       {
-        "environment": "P2610D",
-        "history": 3
+        "environment": "P2610_COMPILA",
+        "history": 2
+      },
+      {
+        "environment": "P2610_DEBUG",
+        "history": 2
       }
     ],
+    "server_compiler": "",
+    "services": [
+      "protheus-2610.sh",
+      "protheus-2610-exclusivo.sh",
+      "smartview-2610.sh"
+    ],
+    "services_always_on": [],
+    "services_refresh_schedule": [],
     "stop_timeout": 30,
-    "ad_enabled": false,
-    "ad_server": "",
-    "ad_domain": ""
+    "topology_type": "Padrão",
+    "webservices": []
+  },
+  {
+    "business_criticality": "",
+    "business_name": "",
+    "business_owner": "",
+    "business_tags": [],
+    "compiler_environment": "patch_apply",
+    "debug_services": [],
+    "dictionary_companies": "",
+    "environments": [],
+    "exclusive_mode_services": [],
+    "git_branch": "main",
+    "git_project_folder": "",
+    "git_repo_url": "",
+    "git_target_environment": "",
+    "id": "3713",
+    "includes": "",
+    "links": [],
+    "name": "DbAccess",
+    "path_to_compiler": "",
+    "path_to_compiler_location": "",
+    "path_to_files": [],
+    "path_to_ini": [],
+    "properties": [],
+    "server_compiler": "",
+    "services": [
+      "dbaccess-2610.sh",
+      "postgres-2610.sh"
+    ],
+    "services_always_on": [],
+    "services_refresh_schedule": [],
+    "shared_folders": [],
+    "topology_type": "Serviços",
+    "webservices": []
+  },
+  {
+    "business_criticality": "",
+    "business_name": "",
+    "business_owner": "",
+    "business_tags": [],
+    "compiler_environment": "patch_apply",
+    "debug_services": [],
+    "dictionary_companies": "",
+    "environments": [
+      "ENVIRONMENT"
+    ],
+    "exclusive_mode_services": [],
+    "git_branch": "main",
+    "git_project_folder": "",
+    "git_repo_url": "",
+    "git_target_environment": "",
+    "id": "8218",
+    "includes": "",
+    "links": [],
+    "name": "License Server",
+    "path_to_compiler": "",
+    "path_to_compiler_location": "",
+    "path_to_files": [],
+    "path_to_ini": [
+      "/protheus12/bin/appserver-license/appserver.ini"
+    ],
+    "properties": [
+      {
+        "environment": "ENVIRONMENT",
+        "history": 2
+      }
+    ],
+    "server_compiler": "",
+    "services": [
+      "license-2610.sh"
+    ],
+    "services_always_on": [],
+    "services_refresh_schedule": [],
+    "shared_folders": [],
+    "topology_type": "Padrão",
+    "webservices": []
   }
 ]
