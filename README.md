@@ -93,3 +93,19 @@ O DeskFlow Control é um produto licenciado por servidor. Esta demonstração em
 ATENÇÃO!
 O banco de dados já vem restaurado dentro da imagem `postgres-2610` (volume `pgdata`). Só haverá restore do dump na primeira subida se você montar uma pasta vazia em `/var/lib/postgresql/seed` em vez do volume nomeado; nesse caso aguarde o log do container do postgres mostrar `Restore Finished`.
 
+---
+
+<h2>Versões deste pacote (publicado em 17/10/2026)</h2>
+
+| Imagem | Tag | Conteúdo |
+|---|---|---|
+| `emebatista/postgres-2610` | 1.0.0 / latest | PostgreSQL 15.14 com a base 12.1.2610 já restaurada (encoding WIN1252) |
+| `emebatista/license-server-2610` | 1.0.0 / latest | License Server 3.7.2 |
+| `emebatista/protheus-dbaccess-2610` | 1.0.0 / latest | DBAccess 26.1.0.0 |
+| `emebatista/protheus-2610` | 1.0.0 / latest | AppServer 26.3.0.0, RPO/Lib 12.1.2610 (Lib 20261016), WebApp 26.0.0, compilador do DeskFlow com includes, ambientes P2610 / P2610_COMPILA / P2610_DEBUG; usada também pelo acesso exclusivo |
+| `emebatista/smartview-2610` | 1.0.0 / latest | SmartView 3.11.4 (Agent 3.5.4) |
+| `emebatista/deskflow-2610` | 1.0.0 / latest | DeskFlow Control 3.0.250 com nginx embutido, topologias e licença de demonstração pré-configuradas |
+
+Para atualizar uma instalação existente para as imagens mais recentes: `docker compose pull` seguido de `docker compose up -d` (os volumes nomeados preservam banco, RPO, INIs e a configuração do DeskFlow). Para conferir o que está publicado: https://hub.docker.com/u/emebatista
+
+Documentação completa: [guia do usuário em PDF](docs/Guia-Protheus-2610-Docker-DeskFlow.pdf).
