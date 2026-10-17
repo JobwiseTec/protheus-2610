@@ -32,8 +32,12 @@ services:
         pid: host
         cap_add:
             - SYS_PTRACE
-        ports:
-            - "8074:8074"
+        # Segurança: pid:host + SYS_PTRACE + docker.sock dão a este container
+        # controle total do Docker host. É o desenho do DeskFlow (ele controla
+        # serviços do host) e serve para demonstração/desenvolvimento. Em servidor
+        # compartilhado, publique a UI só em 127.0.0.1 ou atrás de um proxy com
+        # TLS, troque a senha padrão e considere um docker-socket-proxy restrito.
+        # A API (8074) não é publicada: só o nginx a alcança, pela rede interna.
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock
             - ./deskflow:/opt/deskflow
