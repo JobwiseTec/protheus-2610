@@ -91,6 +91,18 @@ O Docker baixa as seis imagens (~9 GB) e cria o grupo <strong>protheus2610</stro
 <pre>docker compose logs -f db</pre>
 Está pronto quando aparecer <code>database system is ready to accept connections</code>. Só haverá restore do dump (2 a 10 minutos, mensagem <code>Restore Finished</code>) se o volume for substituído por uma pasta vazia.</li>
 </ol>
+<div class="box ok"><p><strong>Tempos de referência</strong> (teste em pasta nova, Mac Apple Silicon com Docker Desktop em emulação amd64 — em servidor x86 é mais rápido):</p>
+<table>
+<tr><th>Etapa</th><th>Tempo após o <code>docker compose up -d</code></th></tr>
+<tr><td>Criação dos containers e volumes</td><td>~1 min (cópia do cluster do banco e do /protheus12 das imagens para os volumes)</td></tr>
+<tr><td>Postgres aceitando conexões</td><td>segundos (banco já restaurado na imagem)</td></tr>
+<tr><td>Protheus WebApp (4321)</td><td>~15 s</td></tr>
+<tr><td>REST do Protheus (8181)</td><td>~1 min</td></tr>
+<tr><td>SmartView (7017)</td><td>~2 min</td></tr>
+<tr><td>DeskFlow (8073) licenciado</td><td>imediato; a licença de demonstração é renovada automaticamente na primeira subida</td></tr>
+<tr><td>Modo exclusivo (Ativar/Desativar no DeskFlow)</td><td>~5 s para cada troca</td></tr>
+</table>
+<p class="small">O download das seis imagens (~9 GB) acontece antes e depende da sua conexão; os tempos acima começam depois de baixadas.</p></div>
 <figure><img src="../image-2.png" alt="Log do Postgres ao final do restore"><figcaption>Figura 1 — Log do container do Postgres pronto para conexões (exemplo da versão anterior).</figcaption></figure>
 <p>Se o AppServer subir antes do banco, ele reinicia sozinho uma ou duas vezes. É normal; estabiliza assim que o Postgres responde.</p>
 <div class="box ok"><p><strong>Volumes criados automaticamente:</strong> <code>pgdata</code> (banco já restaurado), <code>protheus12</code> (binários, RPO, compilador e logs do AppServer, incluindo a pasta do acesso exclusivo), <code>protheus12-license</code> e <code>dbaccess-multi</code>. Eles são preenchidos a partir das imagens e preservam alterações (INIs editados, patches aplicados, dados) entre reinícios e recriações dos containers.</p></div>
