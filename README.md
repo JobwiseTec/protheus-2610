@@ -87,7 +87,7 @@ Primeiro acesso: **http://localhost:8073**, usuário ```admin```, senha ```msadm
 
 <h3>Licença</h3>
 
-O DeskFlow Control é um produto licenciado por servidor. Esta demonstração em containers mostra o produto completo; para usar no seu ambiente (VM ou servidor físico, Linux ou Windows), solicite uma licença de avaliação ou comercial em **https://deskflow.com.br** (menu Contato) ou pelo e-mail `emebatista@hotmail.com`, informando nome da empresa e quantidade de servidores. A licença é aplicada nos campos `tenant_code`, `tenant_name` e `tenant_authorization` do `deskflow/deskflow.ini`.
+O DeskFlow Control é um produto licenciado por servidor. Esta demonstração em containers mostra o produto completo; para usar no seu ambiente (VM ou servidor físico, Linux ou Windows), solicite uma licença de avaliação ou comercial em **https://deskflow.com.br** (menu Contato) ou pelo e-mail `contato@deskflow.com.br`, informando nome da empresa e quantidade de servidores. A licença é aplicada nos campos `tenant_code`, `tenant_name` e `tenant_authorization` do `deskflow/deskflow.ini`.
 
 
 ATENÇÃO!
