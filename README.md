@@ -15,7 +15,7 @@ e depois <br>
 No Docker Desktop, o nome do grupo de conteiners será o mesmo do nome da pasta onde foi dado o comando.
 4. Acessar o <b>Protheus</b> através do smartclient através na porta <b>1234</b>. O nome do ambiente é <b>P2610</b>. Após subida dos containeres, aguarde 5 minutos até entrar pela primeira vez no sistema, pois logo na primeira construção do container o banco de dados será criado e restaurado o backup inicial. 
 5. Acessar o <b>Protheus WebApp</b> através do navegador do endereço <b>http://localhost:4321</b>.
-6. Usuário: Admin , senha: ```$$T0tvs$$```
+6. Usuário: Admin , senha: ```T0tvs@2026``` (senha da release 2610; na 2510 era ```$$T0tvs$$```)
 7. Primeiro entre em SIGACFG / Cadastros / Configuração do Tipo de Ambiente -> Definir como "Desenvolvimento"
 8. O SmartView já vem instalado e pré-configurado em uma máquina virtual chamada smartview-2610 com as portas 7017 e 7019 expostas:
     - Para verificar o status do serviço do SmartView: http://localhost:7019/diagnostic
@@ -36,6 +36,7 @@ No Docker Desktop, o nome do grupo de conteiners será o mesmo do nome da pasta 
 ![alt text](image-7.png)
 
     - Para acessar o WebMonitor: http://localhost:1234/webmonitor
+    - DeskFlow Control (gerenciamento dos containers, quando incluído no compose): http://localhost:8073 , usuário ```admin``` , senha ```msadm```
     
 Notas:
 1) Para utilizar o Protheus na interface sem a porta multiprotocolo, utilize o ambiente P2610D. Esta opção é útil quando se precisa compilar customizações desenvolvidas em ADVPL/TLPP.
