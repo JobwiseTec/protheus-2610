@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Protheus 12.1.2610 em Docker com DeskFlow Control</title>
+<style>
+  @page { size: A4; margin: 18mm 16mm 18mm 16mm; }
+  body { font-family: -apple-system, "Helvetica Neue", Arial, sans-serif; font-size: 10.5pt; line-height: 1.45; color: #1a1a1a; }
+  h1 { font-size: 22pt; margin: 0 0 4pt 0; color: #0a3d6b; }
+  h2 { font-size: 15pt; color: #0a3d6b; border-bottom: 2px solid #0a3d6b; padding-bottom: 2pt; margin-top: 22pt; page-break-after: avoid; }
+  h3 { font-size: 12pt; color: #14507f; margin-top: 14pt; page-break-after: avoid; }
+  p { margin: 5pt 0; }
+  .sub { color: #555; font-size: 10pt; margin-bottom: 14pt; }
+  table { border-collapse: collapse; width: 100%; margin: 6pt 0 10pt 0; font-size: 9.3pt; }
+  tr { page-break-inside: avoid; }
+  th, td { border: 1px solid #c8c8c8; padding: 3.5pt 5pt; vertical-align: top; text-align: left; }
+  th { background: #e8eef5; }
+  code { font-family: Menlo, Consolas, monospace; font-size: 8.8pt; background: #f2f2f2; padding: 0 2pt; border-radius: 2px; }
+  pre { font-family: Menlo, Consolas, monospace; font-size: 8.6pt; background: #f5f5f5; border: 1px solid #ddd; padding: 6pt 8pt; white-space: pre-wrap; page-break-inside: avoid; }
+  ul, ol { margin: 4pt 0 6pt 0; padding-left: 20pt; }
+  li { margin: 2.5pt 0; }
+  .box { border-left: 4px solid #d9822b; background: #fff7ee; padding: 6pt 10pt; margin: 8pt 0; page-break-inside: avoid; }
+  .ok { border-left-color: #2e7d32; background: #eef7ee; }
+  .info { border-left-color: #1565c0; background: #eef3fb; }
+  figure { margin: 8pt 0 12pt 0; page-break-inside: avoid; }
+  figure img { width: 100%; border: 1px solid #ccc; border-radius: 3px; }
+  figure.half img { width: 60%; }
+  figcaption { font-size: 8.8pt; color: #555; margin-top: 3pt; }
+  .small { font-size: 9pt; color: #555; }
+  .toc li { margin: 1pt 0; }
+</style>
+</head>
+<body>
+
+<h1>Protheus 12.1.2610 em Docker com DeskFlow Control</h1>
+<p class="sub">Guia do usuário: download, primeira subida, acesso ao Protheus e operação pelo DeskFlow · imagens <code>emebatista/*-2610</code> no Docker Hub · repositório <code>github.com/emebatista/docker-protheus-2610</code></p>
+
+<div class="box info"><p><strong>O que você vai ter ao final:</strong> um Protheus 12.1.2610 completo (AppServer 26.3, DBAccess 26.1, License Server 3.7.2, Postgres 15 com base de demonstração, SmartView 3.11) rodando em containers na sua máquina, com o <strong>DeskFlow Control</strong> como painel de operação em <code>http://localhost:8073</code>. Nada é instalado fora do Docker; para remover, basta apagar os containers e volumes.</p></div>
+
+<h2>Sumário</h2>
+<ol class="toc">
+  <li>Pré-requisitos</li>
+  <li>Download</li>
+  <li>Primeira subida</li>
+  <li>DeskFlow Control: primeiro acesso</li>
+  <li>Acessando o Protheus</li>
+  <li>Configurações iniciais no Configurador</li>
+  <li>SmartView</li>
+  <li>Operação do dia a dia pelo DeskFlow</li>
+  <li>Portas, usuários e senhas</li>
+  <li>Atualizar, recriar e remover</li>
+  <li>Problemas comuns</li>
+  <li>Licença do DeskFlow</li>
+</ol>
+
+<h2>1. Pré-requisitos</h2>
+<table>
+<tr><th>Item</th><th>Requisito</th></tr>
+<tr><td>Docker</td><td><strong>Docker Desktop</strong> (Windows, macOS) ou Docker Engine + plugin Compose v2 (Linux). Comando <code>docker compose version</code> deve responder. Download: <code>https://www.docker.com/products/docker-desktop/</code></td></tr>
+<tr><td>Recursos</td><td>Reserve ao Docker pelo menos <strong>4 CPUs, 8 GB de RAM e 30 GB de disco</strong> (Docker Desktop → Settings → Resources). As imagens somam ~10 GB; a base restaurada ocupa ~2 GB.</td></tr>
+<tr><td>Mac com Apple Silicon (M1/M2/M3/M4)</td><td>As imagens são <code>linux/amd64</code> e rodam por emulação. Em Docker Desktop → Settings → General, <strong>desligue</strong> "Use Rosetta for x86_64/amd64 emulation on Apple Silicon" (com ela ligada alguns containers não sobem). A primeira subida é mais lenta que em x86.</td></tr>
+<tr><td>Windows</td><td>Docker Desktop com backend WSL 2. Execute os comandos no PowerShell ou no terminal do WSL, dentro da pasta do projeto.</td></tr>
+<tr><td>Portas livres</td><td>1234, 4321, 8181, 1235, 4322, 5432, 7890, 2234, 5555, 8020, 7017, 7019, 8073. Se já tiver os containers da versão 2410/2510, pare-os antes (mesmas portas).</td></tr>
+<tr><td>SmartClient (opcional)</td><td>Para a interface desktop, instale o SmartClient da TOTVS na sua máquina. O <strong>WebApp</strong> (navegador) dispensa instalação.</td></tr>
+<tr><td>Conta no Docker Hub</td><td>Gratuita; necessária para o <code>docker login</code> e para baixar as imagens sem limite de taxa.</td></tr>
+</table>
+
+<h2>2. Download</h2>
+<p>Baixe o repositório inteiro — ele traz o <code>docker-compose.yml</code>, o <code>conf.inf</code> e a pasta <code>deskflow/</code> (configuração do DeskFlow). Duas formas:</p>
+<pre>git clone https://github.com/emebatista/docker-protheus-2610.git
+cd docker-protheus-2610</pre>
+<p>ou, no GitHub, botão <strong>Code → Download ZIP</strong>, descompacte e entre na pasta. A estrutura deve ficar assim:</p>
+<pre>docker-protheus-2610/
+├── docker-compose.yml      ← todos os serviços, incluindo o DeskFlow
+├── conf.inf                ← credenciais do Postgres usadas pelo DBAccess
+├── deskflow/
+│   ├── config.json         ← topologia "Protheus 2610 (Docker)" já configurada
+│   ├── deskflow.ini        ← parâmetros do DeskFlow (licença entra aqui)
+│   └── nginx/deskflow.conf ← proxy da interface web
+└── README.md</pre>
+<div class="box"><p>Não renomeie nem mova os arquivos: o DeskFlow lê o <code>docker-compose.yml</code> e o <code>conf.inf</code> dessa pasta para controlar os containers.</p></div>
+
+<h2>3. Primeira subida</h2>
+<ol>
+<li>Abra um terminal <strong>dentro da pasta</strong> do projeto.</li>
+<li>Entre no Docker Hub (digite usuário e senha quando pedido):
+<pre>docker login</pre></li>
+<li>Suba tudo:
+<pre>docker compose up -d</pre>
+O Docker baixa as sete imagens (~10 GB) e cria o grupo <strong>protheus2610</strong> com os containers <code>postgresql-2610</code>, <code>license-server-2610</code>, <code>dbaccess-2610</code>, <code>protheus-2610</code>, <code>smartview-2610</code>, <code>deskflow-2610</code> e <code>deskflow-web-2610</code>. O container <code>protheus-2610-exclusivo</code> fica cadastrado, mas só sobe quando o DeskFlow ativa o modo exclusivo.</li>
+<li><strong>Aguarde o banco</strong>. Na primeira subida o Postgres cria a base <code>protheus</code> e restaura o seed 12.1.2610 (203 MB comprimidos → ~2 GB). Leva de 2 a 10 minutos conforme a máquina. Acompanhe no Docker Desktop (container <code>postgresql-2610</code> → Logs) ou com:
+<pre>docker compose logs -f db</pre>
+Está pronto quando aparecer <code>Restore Finished. Base Protheus 12.1.2610 pronta.</code> seguido de <code>PostgreSQL init process complete; ready for start up.</code></li>
+</ol>
+<figure><img src="../image-2.png" alt="Log do Postgres ao final do restore"><figcaption>Figura 1 — Log do container do Postgres ao final da primeira subida (exemplo da versão anterior; a mensagem é a mesma).</figcaption></figure>
+<p>Enquanto o banco restaura, o AppServer reinicia sozinho algumas vezes (não encontra o DBAccess/banco). É normal; ele estabiliza assim que o Postgres responde.</p>
+<div class="box ok"><p><strong>Volumes criados automaticamente:</strong> <code>protheus12</code> (binários, RPO, dicionários e logs do AppServer), <code>protheus12-exclusivo</code>, <code>protheus12-license</code>, <code>dbaccess-multi</code> e a pasta de dados do Postgres. Eles são preenchidos a partir das imagens e preservam alterações (INIs editados, patches aplicados, dados) entre reinícios e recriações dos containers.</p></div>
+
+<h2>4. DeskFlow Control: primeiro acesso</h2>
+<ol>
+<li>Abra <strong>http://localhost:8073</strong>.</li>
+<li>Usuário <code>admin</code>, senha <code>msadm</code>.</li>
+<li>Troque a senha: Configuração → Usuários → admin.</li>
+</ol>
+<figure><img src="../deskflow-1-monitor.jpg" alt="DeskFlow - Monitor"><figcaption>Figura 2 — Página inicial: CPU, memória e disco do servidor Docker.</figcaption></figure>
+<p>No menu lateral, <strong>Topologias</strong> lista "Protheus 2610 (Docker)" (AppServer, exclusivo e SmartView), "DbAccess" (DBAccess e Postgres) e "License Server". Clique na primeira: a aba <strong>Serviços</strong> mostra cada container como um serviço, com status, portas em uso e botões iniciar / parar / reiniciar.</p>
+<figure><img src="../deskflow-2-servicos.jpg" alt="DeskFlow - Serviços"><figcaption>Figura 3 — Aba Serviços da topologia Protheus: status em tempo real, portas, edição de INI (lápis) e log ao vivo (olho).</figcaption></figure>
+<p>Use esta tela para confirmar que a subida terminou: <code>protheus-2610.sh</code> e <code>smartview-2610.sh</code> em <strong>Running</strong>; na topologia DbAccess, <code>postgres-2610.sh</code> e <code>dbaccess-2610.sh</code> em Running; o exclusivo fica <strong>Stopped</strong> por padrão.</p>
+
+<h2>5. Acessando o Protheus</h2>
+<table>
+<tr><th>Interface</th><th>Como</th></tr>
+<tr><td><strong>WebApp</strong> (navegador, sem instalar nada)</td><td><code>http://localhost:4321</code>. No macOS o WebApp pede o <strong>WebAgent</strong> (aplicativo da TOTVS) na primeira vez; instale e deixe-o aberto. Para ir direto a um módulo: <code>http://localhost:4321/?StartProg=SIGACFG&amp;Env=P2610</code>.</td></tr>
+<tr><td><strong>SmartClient</strong> (desktop)</td><td>Servidor <code>localhost</code>, porta <code>1234</code>, ambiente <code>P2610</code>, programa inicial <code>SIGAMDI</code> (ou <code>SIGACFG</code> para o Configurador).</td></tr>
+<tr><td>Usuário / senha</td><td><code>Admin</code> / <code>T0tvs@2026</code></td></tr>
+<tr><td>Empresa / filial</td><td>99 / 01 (TESTE / MATRIZ), base de demonstração.</td></tr>
+<tr><td>WebMonitor</td><td><code>http://localhost:1234/webmonitor</code></td></tr>
+<tr><td>Ambiente sem porta multiprotocolo</td><td><code>P2610D</code> — útil para compilar customizações ADVPL/TLPP pelo VSCode (TDS).</td></tr>
+</table>
+<p>Na primeira entrada aparece o aviso "Este ambiente utiliza base de Desenvolvimento": é esperado, feche e siga.</p>
+
+<h2>6. Configurações iniciais no Configurador</h2>
+<ol>
+<li><strong>Tipo de ambiente</strong>: SIGACFG → Ambiente → Cadastros → Configuração do Tipo de Ambiente → "Desenvolvimento" (já vem assim na base de demonstração; confirme).</li>
+<li><strong>Conferir a release</strong>: dentro do Configurador pressione <strong>Shift+F6</strong> (Central de Diagnóstico). Deve mostrar Release do RPO e do dicionário <strong>12.1.2610</strong>, AppServer 26.3.0.0, DBAccess 26.1.0.0, License Server 3.7.2, WebApp 26.0.0.</li>
+<li><strong>SmartView</strong>: veja a seção 7.</li>
+</ol>
+
+<h2>7. SmartView</h2>
+<p>O SmartView (relatórios e análises) já sobe no container <code>smartview-2610</code>:</p>
+<ul>
+<li>Aplicação: <code>http://localhost:7017</code> — login com o usuário do Protheus (<code>admin</code> e a senha acima).</li>
+<li>Agente/diagnóstico: <code>http://localhost:7019/diagnostic</code> (status do serviço, versões instaladas); <code>http://localhost:7019/startup</code> para reconfigurar.</li>
+</ul>
+<p>Para o Protheus abrir os relatórios no formato SmartView, cadastre a URL no Configurador: SIGACFG → Ambiente → Cadastros → <strong>Configuração Smart View</strong> → autenticação <strong>Token Protheus</strong> → Avançar → URL base <strong>http://&lt;IP da sua máquina&gt;:7017</strong> → <strong>Testar conexão</strong> → Confirmar.</p>
+<div class="box"><p>Use o <strong>IP real</strong> da máquina (ex.: <code>http://192.168.0.10:7017</code>), nunca <code>localhost</code> ou <code>127.0.0.1</code>: quem chama essa URL é o AppServer de dentro do container. Descubra o IP com <code>ipconfig</code> (Windows) ou <code>ipconfig getifaddr en0</code> (macOS). Se o IP mudar (outra rede), refaça o cadastro. Dentro do SmartView, nos conectores, informe o mesmo IP.</p></div>
+<figure class="half"><img src="../image-8.png" alt="Configuração SmartView - tipo de autenticação"><figcaption>Figura 4 — Configuração Smart View no Configurador: Token Protheus.</figcaption></figure>
+<figure><img src="../image-1.png" alt="Conector nativo do SmartView apontando para o IP da máquina"><figcaption>Figura 5 — Conector no SmartView: endereço com o IP da máquina.</figcaption></figure>
+
+<h2>8. Operação do dia a dia pelo DeskFlow</h2>
+<p>Depois da primeira subida, você não precisa mais do <code>docker compose</code>: tudo passa pelo DeskFlow.</p>
+<table>
+<tr><th>Tarefa</th><th>Onde</th></tr>
+<tr><td>Parar / iniciar / reiniciar um serviço ou todos</td><td>Topologia → Serviços → botões por linha ou Iniciar/Parar/Reiniciar no topo.</td></tr>
+<tr><td>Modo exclusivo (manutenção na base)</td><td>Serviços → <strong>Ativar Exclusivo</strong>: para o AppServer normal e sobe o <code>protheus-2610-exclusivo</code> (SmartClient porta 1235 / WebApp 4322, sem REST). <strong>Desativar Exclusivo</strong> devolve tudo ao normal.</td></tr>
+<tr><td>Ver o log do AppServer em tempo real</td><td>Serviços → ícone do olho na linha do serviço: <code>console.log</code> ao vivo com filtro por palavra-chave e download.</td></tr>
+<tr><td>Editar <code>appserver.ini</code> / <code>dbaccess.ini</code></td><td>Serviços → ícone do lápis (edição com validação e backup automático) ou menu Arq. Ini → comparar seções.</td></tr>
+<tr><td>Ambientes e RPO</td><td>Aba <strong>Ambientes</strong>: promover RPO entre ambientes, comparar, rollback, aplicar pacotes (PTM/PAK/UPD), atualizar dicionário.</td></tr>
+<tr><td>Auditoria da topologia</td><td>Aba <strong>Auditoria</strong>: checagens de INIs, ambiente principal, sourcepaths, binários e compilador, com semáforo.</td></tr>
+<tr><td>Saúde geral</td><td><strong>Visão Executiva</strong>: topologias saudáveis, serviços operacionais, riscos e atividade do período.</td></tr>
+<tr><td>Rastreabilidade</td><td><strong>Log de Ações</strong>: quem fez o quê, quando, com resultado.</td></tr>
+<tr><td>Agendamentos</td><td>Aba <strong>Scheduler</strong>: restart programado, promoções, patches por cron ou intervalo.</td></tr>
+<tr><td>Atalhos</td><td>Aba <strong>Atalhos</strong>: WebApp, WebMonitor, SmartView, License Server já cadastrados.</td></tr>
+</table>
+<figure><img src="../deskflow-3-ambientes.jpg" alt="DeskFlow - Ambientes"><figcaption>Figura 6 — Aba Ambientes: P2610 (principal) e P2610D, com Promover, Comparar, RollBack, Pacotes e Dicionário.</figcaption></figure>
+<figure><img src="../deskflow-5-auditoria.jpg" alt="DeskFlow - Auditoria"><figcaption>Figura 7 — Auditoria da topologia.</figcaption></figure>
+<figure><img src="../deskflow-4-visao-executiva.jpg" alt="DeskFlow - Visão Executiva"><figcaption>Figura 8 — Visão Executiva.</figcaption></figure>
+<figure><img src="../deskflow-6-log-acoes.jpg" alt="DeskFlow - Log de Ações"><figcaption>Figura 9 — Log de Ações.</figcaption></figure>
+<p class="small">O item "Compilador configurado" da auditoria aparece em amarelo até você gerar o compilador da topologia (Configuração → Topologias → Gerar Compilador). Não impede nada do que está neste guia.</p>
+
+<h2>9. Portas, usuários e senhas</h2>
+<table>
+<tr><th>Serviço</th><th>Endereço</th><th>Credencial</th></tr>
+<tr><td>DeskFlow Control</td><td>http://localhost:8073</td><td>admin / msadm (troque)</td></tr>
+<tr><td>Protheus WebApp</td><td>http://localhost:4321</td><td>Admin / T0tvs@2026</td></tr>
+<tr><td>Protheus SmartClient</td><td>localhost:1234, ambiente P2610</td><td>Admin / T0tvs@2026</td></tr>
+<tr><td>Protheus exclusivo (só em modo exclusivo)</td><td>localhost:1235 · WebApp 4322</td><td>idem</td></tr>
+<tr><td>REST do Protheus</td><td>http://localhost:8181/rest</td><td>token Protheus</td></tr>
+<tr><td>SmartView</td><td>http://localhost:7017 · agente :7019</td><td>usuário do Protheus</td></tr>
+<tr><td>License Server</td><td>http://localhost:8020 (console) · 5555/2234</td><td>—</td></tr>
+<tr><td>DBAccess (DBMonitor)</td><td>localhost:7890</td><td>—</td></tr>
+<tr><td>Postgres</td><td>localhost:5432, base <code>protheus</code></td><td>protheus / protheus (ver <code>conf.inf</code>)</td></tr>
+</table>
+<div class="box"><p><strong>Segurança:</strong> este pacote é para demonstração e desenvolvimento. As portas ficam abertas para a rede local e as senhas são públicas. Não exponha a máquina à internet; em servidor compartilhado, publique as portas só em <code>127.0.0.1</code> no <code>docker-compose.yml</code> e troque as senhas.</p></div>
+
+<h2>10. Atualizar, recriar e remover</h2>
+<ul>
+<li><strong>Parar tudo</strong> (preservando dados): <code>docker compose stop</code>. Subir de novo: <code>docker compose start</code> (ou pelo Docker Desktop).</li>
+<li><strong>Baixar imagem nova de um serviço</strong> e recriá-lo: <pre>docker compose up -d --no-deps --force-recreate --pull always protheus</pre> (idem <code>license</code>, <code>db</code>, <code>dbaccess</code>, <code>smartview</code>, <code>deskflow</code>). Os volumes nomeados preservam INIs, RPO e dados.</li>
+<li><strong>Voltar um volume ao conteúdo original da imagem</strong> (ex.: desfazer alterações no AppServer): <pre>docker compose stop protheus
+docker volume rm protheus2610_protheus12
+docker compose up -d protheus</pre></li>
+<li><strong>Recomeçar o banco do zero</strong>: parar tudo, apagar a pasta <code>volume/data/psql</code> (ou o volume do banco) e subir; o seed é restaurado de novo.</li>
+<li><strong>Remover tudo</strong>: <code>docker compose down -v</code> (apaga containers e volumes) e, se quiser liberar disco, <code>docker image rm</code> das imagens <code>emebatista/*-2610</code>.</li>
+<li><strong>DeskFlow</strong>: a configuração, os dados e a licença ficam na pasta <code>deskflow/</code> do projeto; recriar o container não os perde. Atualizações do DeskFlow vêm pela imagem (<code>--pull always deskflow</code>).</li>
+</ul>
+
+<h2>11. Problemas comuns</h2>
+<table>
+<tr><th>Sintoma</th><th>Causa provável / solução</th></tr>
+<tr><td>Container não sobe no Mac Apple Silicon</td><td>Rosetta ligada no Docker Desktop. Desligue (Settings → General) e reinicie o Docker.</td></tr>
+<tr><td><code>port is already allocated</code></td><td>Outra versão (2410/2510) ou outro programa usando a porta. Pare os containers antigos ou mude a porta publicada no compose.</td></tr>
+<tr><td>Protheus não abre logo após o <code>up</code></td><td>Banco ainda restaurando. Espere o <code>Restore Finished</code> no log do Postgres; o AppServer reinicia sozinho.</td></tr>
+<tr><td>WebApp fica em branco</td><td>Sessões abandonadas (abas fechadas sem Log Off). No DeskFlow, reinicie o <code>protheus-2610.sh</code>. No macOS confirme que o WebAgent está aberto.</td></tr>
+<tr><td>"Falha ao conectar com o WebAgent" (macOS)</td><td>Instale/abra o WebAgent da TOTVS (porta 21021) e recarregue o WebApp.</td></tr>
+<tr><td>SmartView: "Teste da conexão" falha no Configurador</td><td>URL com <code>localhost</code>. Use o IP real da máquina; confira <code>http://localhost:7019/diagnostic</code> (servidor deve estar ativo na versão 3.11.x).</td></tr>
+<tr><td>REST (8181) não responde após parada brusca</td><td>Reinicie o <code>protheus-2610.sh</code> pelo DeskFlow; o REST volta em ~1 minuto.</td></tr>
+<tr><td>DeskFlow mostra serviço Stopped que está rodando</td><td>O DeskFlow lê o status pelo Docker; aguarde o ciclo de 30 s ou clique em atualizar. Se persistir, verifique se o grupo do compose se chama <code>protheus2610</code> (nome fixo no arquivo).</td></tr>
+<tr><td>DeskFlow "Licença expirada"</td><td>Veja a seção 12.</td></tr>
+<tr><td>Pouca memória / lentidão</td><td>Aumente os recursos do Docker Desktop (8 GB+). Pare o SmartView se não for usá-lo (pelo DeskFlow).</td></tr>
+</table>
+
+<h2>12. Licença do DeskFlow</h2>
+<p>O DeskFlow Control é licenciado por servidor. Este pacote demonstra o produto completo; para usar no seu ambiente (VM ou servidor físico, Linux ou Windows, com seus AppServers reais), solicite uma licença de avaliação ou comercial em <strong>https://deskflow.com.br</strong> (Contato) ou pelo e-mail <strong>emebatista@hotmail.com</strong>, informando empresa e quantidade de servidores. Você receberá <code>tenant_code</code>, <code>tenant_name</code> e <code>tenant_authorization</code>; grave-os no <code>deskflow/deskflow.ini</code> (seção <code>[setup]</code>), reinicie o container <code>deskflow-2610</code> e confira o selo <strong>Licenciado</strong> no topo da tela. A renovação é automática (job diário) enquanto o servidor de licenças estiver acessível.</p>
+<p>Instalação em servidor próprio (fora do Docker): pacotes RPM (EL8/EL9) e instalador Windows, com nginx e serviço do sistema. Documentação em <strong>https://deskflow.com.br</strong>.</p>
+
+<p class="small">Versão deste guia: 17/10/2026. Protheus 12.1.2610 · AppServer 26.3.0.0 · DBAccess 26.1.0.0 · License Server 3.7.2 · SmartView 3.11.4 · DeskFlow Control 3.0.250.</p>
+</body>
+</html>

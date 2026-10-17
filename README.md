@@ -3,6 +3,8 @@ Protheus 12.1.2610 em containers Docker (Postgres, DBAccess, License Server 3.7.
 
 > Em preparação: as imagens `emebatista/*-2610` ainda não foram publicadas no Docker Hub. Enquanto isso, use o repositório da versão anterior: https://github.com/emebatista/docker-protheus-2510
 
+📘 **Guia completo em PDF** (download, primeira subida, DeskFlow, Protheus, SmartView, operação e problemas comuns): [docs/Guia-Protheus-2610-Docker-DeskFlow.pdf](docs/Guia-Protheus-2610-Docker-DeskFlow.pdf)
+
 Procedimentos:
 1. Instalar o <b>Docker</b> ( https://www.docker.com/products/docker-desktop/ ). <b>IMPORTANTE:</b> Se você possui um Mac com chip M1/M2, desabilite no Docker a opção "Use Rosetta for x86_64/amd64 emulation on Apple Silicon", caso contrário os conteiners podem não subir. 
 2. Criar uma pasta e copiar para ela este repositório (botão <b>Code → Download ZIP</b>, ou ```git clone https://github.com/emebatista/docker-protheus-2610.git```). São necessários o <b>docker-compose.yml</b>, o <b>conf.inf</b> e a pasta <b>deskflow/</b> (configuração do DeskFlow Control).
