@@ -1,0 +1,96 @@
+[
+  {
+    "id": "1",
+    "name": "Protheus 2610 (Docker)",
+    "topology_type": "Padrão",
+    "business_name": "Protheus 12.1.2610 em containers",
+    "business_owner": "TI",
+    "business_criticality": "medium",
+    "business_tags": [
+      "Protheus"
+    ],
+    "services": [
+      "postgres-2610.sh",
+      "license-2610.sh",
+      "dbaccess-2610.sh",
+      "protheus-2610.sh",
+      "protheus-2610-exclusivo.sh",
+      "smartview-2610.sh"
+    ],
+    "services_always_on": [],
+    "services_refresh_schedule": [],
+    "exclusive_mode_services": [
+      "protheus-2610-exclusivo.sh"
+    ],
+    "webservices": [],
+    "debug_services": [
+      "protheus-2610.sh"
+    ],
+    "environments": [
+      "P2610",
+      "P2610D"
+    ],
+    "path_to_ini": [
+      "/protheus12/bin/appserver/appserver.ini",
+      "/protheus12/bin/appserver-exclusivo/appserver.ini"
+    ],
+    "path_to_compiler": "",
+    "compiler_environment": "PATCH_APPLY",
+    "path_to_compiler_location": "",
+    "server_compiler": "",
+    "genpatch_command": "",
+    "path_to_files": [
+      {
+        "id": "1",
+        "name": "console.log (protheus)",
+        "path": "/protheus12/bin/appserver/console.log"
+      },
+      {
+        "id": "2",
+        "name": "dbaccess.log",
+        "path": "/dbaccess/multi/dbaccess.log"
+      }
+    ],
+    "links": [
+      {
+        "id": "1",
+        "name": "WebApp",
+        "url": "http://localhost:4321"
+      },
+      {
+        "id": "2",
+        "name": "WebMonitor",
+        "url": "http://localhost:1234/webmonitor"
+      },
+      {
+        "id": "3",
+        "name": "SmartView",
+        "url": "http://localhost:7017"
+      },
+      {
+        "id": "4",
+        "name": "SmartView diagnostic",
+        "url": "http://localhost:7019/diagnostic"
+      },
+      {
+        "id": "5",
+        "name": "License Server",
+        "url": "http://localhost:8020"
+      }
+    ],
+    "properties": [
+      {
+        "environment": "P2610",
+        "history": 3
+      },
+      {
+        "environment": "P2610D",
+        "history": 3
+      }
+    ],
+    "stop_timeout": 30,
+    "ad_enabled": false,
+    "ad_server": "",
+    "ad_domain": ""
+  }
+]

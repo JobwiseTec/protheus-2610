@@ -1,1 +1,8 @@
 .DS_Store
+volume/
+deskflow/data/
+deskflow/logs/
+deskflow/*.log
+deskflow/authorization.key
+deskflow/.deskflow_instance
+deskflow/deskflow_srv*
