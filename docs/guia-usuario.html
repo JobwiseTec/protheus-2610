@@ -87,13 +87,13 @@ cd docker-protheus-2610</pre>
 <li>Suba tudo:
 <pre>docker compose up -d</pre>
 O Docker baixa as sete imagens (~10 GB) e cria o grupo <strong>protheus2610</strong> com os containers <code>postgresql-2610</code>, <code>license-server-2610</code>, <code>dbaccess-2610</code>, <code>protheus-2610</code>, <code>smartview-2610</code> e <code>deskflow-2610</code> (DeskFlow: interface e backend num único container). O container <code>protheus-2610-exclusivo</code> fica cadastrado, mas só sobe quando o DeskFlow ativa o modo exclusivo.</li>
-<li><strong>Aguarde o banco</strong>. Na primeira subida o Postgres cria a base <code>protheus</code> e restaura o seed 12.1.2610 (203 MB comprimidos → ~2 GB). Leva de 2 a 10 minutos conforme a máquina. Acompanhe no Docker Desktop (container <code>postgresql-2610</code> → Logs) ou com:
+<li><strong>Aguarde 1 a 2 minutos.</strong> O banco já vem restaurado dentro da imagem <code>postgres-2610</code>: na primeira subida o Docker copia o cluster pronto (~2 GB) para o volume <code>pgdata</code> e o Postgres sobe em seguida, sem restore. O AppServer leva mais alguns instantes para carregar o RPO. Acompanhe no Docker Desktop (container <code>postgresql-2610</code> → Logs) ou com:
 <pre>docker compose logs -f db</pre>
-Está pronto quando aparecer <code>Restore Finished. Base Protheus 12.1.2610 pronta.</code> seguido de <code>PostgreSQL init process complete; ready for start up.</code></li>
+Está pronto quando aparecer <code>database system is ready to accept connections</code>. Só haverá restore do dump (2 a 10 minutos, mensagem <code>Restore Finished</code>) se o volume for substituído por uma pasta vazia.</li>
 </ol>
-<figure><img src="../image-2.png" alt="Log do Postgres ao final do restore"><figcaption>Figura 1 — Log do container do Postgres ao final da primeira subida (exemplo da versão anterior; a mensagem é a mesma).</figcaption></figure>
-<p>Enquanto o banco restaura, o AppServer reinicia sozinho algumas vezes (não encontra o DBAccess/banco). É normal; ele estabiliza assim que o Postgres responde.</p>
-<div class="box ok"><p><strong>Volumes criados automaticamente:</strong> <code>protheus12</code> (binários, RPO, dicionários e logs do AppServer), <code>protheus12-exclusivo</code>, <code>protheus12-license</code>, <code>dbaccess-multi</code> e a pasta de dados do Postgres. Eles são preenchidos a partir das imagens e preservam alterações (INIs editados, patches aplicados, dados) entre reinícios e recriações dos containers.</p></div>
+<figure><img src="../image-2.png" alt="Log do Postgres ao final do restore"><figcaption>Figura 1 — Log do container do Postgres pronto para conexões (exemplo da versão anterior).</figcaption></figure>
+<p>Se o AppServer subir antes do banco, ele reinicia sozinho uma ou duas vezes. É normal; estabiliza assim que o Postgres responde.</p>
+<div class="box ok"><p><strong>Volumes criados automaticamente:</strong> <code>pgdata</code> (banco já restaurado), <code>protheus12</code> (binários, RPO, dicionários, compilador e logs do AppServer), <code>protheus12-exclusivo</code>, <code>protheus12-license</code> e <code>dbaccess-multi</code>. Eles são preenchidos a partir das imagens e preservam alterações (INIs editados, patches aplicados, dados) entre reinícios e recriações dos containers.</p></div>
 
 <h2>4. DeskFlow Control: primeiro acesso</h2>
 <ol>
@@ -179,7 +179,7 @@ Está pronto quando aparecer <code>Restore Finished. Base Protheus 12.1.2610 pro
 <li><strong>Voltar um volume ao conteúdo original da imagem</strong> (ex.: desfazer alterações no AppServer): <pre>docker compose stop protheus
 docker volume rm protheus2610_protheus12
 docker compose up -d protheus</pre></li>
-<li><strong>Recomeçar o banco do zero</strong>: parar tudo, apagar a pasta <code>volume/data/psql</code> (ou o volume do banco) e subir; o seed é restaurado de novo.</li>
+<li><strong>Recomeçar o banco do zero</strong>: <code>docker compose stop db</code>, <code>docker volume rm protheus2610_pgdata</code>, <code>docker compose up -d db</code>; o cluster pronto é copiado de novo da imagem.</li>
 <li><strong>Remover tudo</strong>: <code>docker compose down -v</code> (apaga containers e volumes) e, se quiser liberar disco, <code>docker image rm</code> das imagens <code>emebatista/*-2610</code>.</li>
 <li><strong>DeskFlow</strong>: a configuração, os dados e a licença ficam na pasta <code>deskflow/</code> do projeto; recriar o container não os perde. Atualizações do DeskFlow vêm pela imagem (<code>--pull always deskflow</code>).</li>
 </ul>
@@ -189,7 +189,7 @@ docker compose up -d protheus</pre></li>
 <tr><th>Sintoma</th><th>Causa provável / solução</th></tr>
 <tr><td>Container não sobe no Mac Apple Silicon</td><td>Rosetta ligada no Docker Desktop. Desligue (Settings → General) e reinicie o Docker.</td></tr>
 <tr><td><code>port is already allocated</code></td><td>Outra versão (2410/2510) ou outro programa usando a porta. Pare os containers antigos ou mude a porta publicada no compose.</td></tr>
-<tr><td>Protheus não abre logo após o <code>up</code></td><td>Banco ainda restaurando. Espere o <code>Restore Finished</code> no log do Postgres; o AppServer reinicia sozinho.</td></tr>
+<tr><td>Protheus não abre logo após o <code>up</code></td><td>Cópia do cluster para o volume ou carga do RPO ainda em andamento. Espere <code>ready to accept connections</code> no log do Postgres; o AppServer reinicia sozinho.</td></tr>
 <tr><td>WebApp fica em branco</td><td>Sessões abandonadas (abas fechadas sem Log Off). No DeskFlow, reinicie o <code>protheus-2610.sh</code>. No macOS confirme que o WebAgent está aberto.</td></tr>
 <tr><td>"Falha ao conectar com o WebAgent" (macOS)</td><td>Instale/abra o WebAgent da TOTVS (porta 21021) e recarregue o WebApp.</td></tr>
 <tr><td>SmartView: "Teste da conexão" falha no Configurador</td><td>URL com <code>localhost</code>. Use o IP real da máquina; confira <code>http://localhost:7019/diagnostic</code> (servidor deve estar ativo na versão 3.11.x).</td></tr>

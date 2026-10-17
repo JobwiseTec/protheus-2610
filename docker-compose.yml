@@ -17,7 +17,9 @@ services:
         ports:
             - "5432:5432"
         volumes:
-            - ./volume/data/psql:/var/lib/postgresql/data
+            # Volume nomeado: na primeira subida o Docker o preenche com o cluster
+            # já restaurado que vem na imagem (base 12.1.2610 pronta, sem restore).
+            - pgdata:/var/lib/postgresql/seed
         networks:
             - protheus
         restart: always
@@ -206,6 +208,7 @@ services:
             - protheus
 
 volumes:
+    pgdata:
     protheus12:
     protheus12-exclusivo:
     protheus12-license:

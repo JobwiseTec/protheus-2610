@@ -10,9 +10,9 @@ Procedimentos:
 ```docker login``` <br>
 e depois <br>
 ```docker compose up -d``` <br> Se as imagens já estiverem em cache e quiser forçar baixá-las de novo, o comando é <br> ```docker compose up -d --pull always```<br>
-No Docker Desktop, o grupo de containers chama-se <b>protheus2610</b> (nome fixo no compose; o DeskFlow depende dele). Na primeira subida o Docker cria os volumes `protheus12`, `protheus12-exclusivo`, `protheus12-license` e `dbaccess-multi` a partir das imagens: é neles que ficam INIs, RPO, dicionários e logs, e é por eles que o DeskFlow enxerga tudo.
-4. Abrir o <b>DeskFlow Control</b> em <b>http://localhost:8073</b> (usuário ```admin```, senha ```msadm``` — troque no primeiro acesso). A topologia "Protheus 2610 (Docker)" já vem configurada com os seis serviços; acompanhe por ali a subida do banco (a vm `postgres-2610.sh` fica Running quando o restore do seed terminar) e use-o para parar, iniciar e reiniciar os serviços daqui em diante — não precisa de `docker compose` no dia a dia.
-5. Acessar o <b>Protheus</b> através do smartclient através na porta <b>1234</b>. O nome do ambiente é <b>P2610</b>. Após subida dos containeres, aguarde 5 minutos até entrar pela primeira vez no sistema, pois logo na primeira construção do container o banco de dados será criado e restaurado o backup inicial. 
+No Docker Desktop, o grupo de containers chama-se <b>protheus2610</b> (nome fixo no compose; o DeskFlow depende dele). Na primeira subida o Docker cria os volumes `pgdata` (banco já restaurado, vem pronto na imagem), `protheus12`, `protheus12-exclusivo`, `protheus12-license` e `dbaccess-multi` a partir das imagens: é neles que ficam o banco, INIs, RPO, dicionários e logs, e é por eles que o DeskFlow enxerga tudo.
+4. Abrir o <b>DeskFlow Control</b> em <b>http://localhost:8073</b> (usuário ```admin```, senha ```msadm``` — troque no primeiro acesso). A topologia "Protheus 2610 (Docker)" já vem configurada com os seis serviços; confira por ali que todos os serviços estão Running e use-o para parar, iniciar e reiniciar os serviços daqui em diante — não precisa de `docker compose` no dia a dia.
+5. Acessar o <b>Protheus</b> através do smartclient através na porta <b>1234</b>. O nome do ambiente é <b>P2610</b>. O banco já vem restaurado na imagem; na primeira subida aguarde 1 a 2 minutos (cópia do cluster para o volume e subida do AppServer) antes de entrar. 
 6. Acessar o <b>Protheus WebApp</b> através do navegador do endereço <b>http://localhost:4321</b>.
 7. Usuário: Admin , senha: ```T0tvs@2026``` (senha da release 2610; na 2510 era ```$$T0tvs$$```)
 8. Primeiro entre em SIGACFG / Cadastros / Configuração do Tipo de Ambiente -> Definir como "Desenvolvimento"
@@ -91,9 +91,5 @@ O DeskFlow Control é um produto licenciado por servidor. Esta demonstração em
 
 
 ATENÇÃO!
-Para que a base contenha dados de exemplo, aguarde até a vm do postgres chegar a este ponto:
-![alt text](image-2.png)
-
-Enquanto estiver em execução, aparecerá algo como:
-![alt text](image-3.png)
+O banco de dados já vem restaurado dentro da imagem `postgres-2610` (volume `pgdata`). Só haverá restore do dump na primeira subida se você montar uma pasta vazia em `/var/lib/postgresql/seed` em vez do volume nomeado; nesse caso aguarde o log do container do postgres mostrar `Restore Finished`.
 
