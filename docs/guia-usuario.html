@@ -86,14 +86,14 @@ cd docker-protheus-2610</pre>
 <pre>docker login</pre></li>
 <li>Suba tudo:
 <pre>docker compose up -d</pre>
-O Docker baixa as sete imagens (~10 GB) e cria o grupo <strong>protheus2610</strong> com os containers <code>postgresql-2610</code>, <code>license-server-2610</code>, <code>dbaccess-2610</code>, <code>protheus-2610</code>, <code>smartview-2610</code> e <code>deskflow-2610</code> (DeskFlow: interface e backend num único container). O container <code>protheus-2610-exclusivo</code> fica cadastrado, mas só sobe quando o DeskFlow ativa o modo exclusivo.</li>
+O Docker baixa as seis imagens (~9 GB) e cria o grupo <strong>protheus2610</strong> com os containers <code>postgresql-2610</code>, <code>license-server-2610</code>, <code>dbaccess-2610</code>, <code>protheus-2610</code>, <code>smartview-2610</code> e <code>deskflow-2610</code> (DeskFlow: interface e backend num único container). O container <code>protheus-2610-exclusivo</code> usa a mesma imagem do protheus e só sobe quando o DeskFlow ativa o modo exclusivo.</li>
 <li><strong>Aguarde 1 a 2 minutos.</strong> O banco já vem restaurado dentro da imagem <code>postgres-2610</code>: na primeira subida o Docker copia o cluster pronto (~2 GB) para o volume <code>pgdata</code> e o Postgres sobe em seguida, sem restore. O AppServer leva mais alguns instantes para carregar o RPO. Acompanhe no Docker Desktop (container <code>postgresql-2610</code> → Logs) ou com:
 <pre>docker compose logs -f db</pre>
 Está pronto quando aparecer <code>database system is ready to accept connections</code>. Só haverá restore do dump (2 a 10 minutos, mensagem <code>Restore Finished</code>) se o volume for substituído por uma pasta vazia.</li>
 </ol>
 <figure><img src="../image-2.png" alt="Log do Postgres ao final do restore"><figcaption>Figura 1 — Log do container do Postgres pronto para conexões (exemplo da versão anterior).</figcaption></figure>
 <p>Se o AppServer subir antes do banco, ele reinicia sozinho uma ou duas vezes. É normal; estabiliza assim que o Postgres responde.</p>
-<div class="box ok"><p><strong>Volumes criados automaticamente:</strong> <code>pgdata</code> (banco já restaurado), <code>protheus12</code> (binários, RPO, dicionários, compilador e logs do AppServer), <code>protheus12-exclusivo</code>, <code>protheus12-license</code> e <code>dbaccess-multi</code>. Eles são preenchidos a partir das imagens e preservam alterações (INIs editados, patches aplicados, dados) entre reinícios e recriações dos containers.</p></div>
+<div class="box ok"><p><strong>Volumes criados automaticamente:</strong> <code>pgdata</code> (banco já restaurado), <code>protheus12</code> (binários, RPO, compilador e logs do AppServer, incluindo a pasta do acesso exclusivo), <code>protheus12-license</code> e <code>dbaccess-multi</code>. Eles são preenchidos a partir das imagens e preservam alterações (INIs editados, patches aplicados, dados) entre reinícios e recriações dos containers.</p></div>
 
 <h2>4. DeskFlow Control: primeiro acesso</h2>
 <ol>

@@ -115,6 +115,10 @@ services:
         restart: always
         depends_on:
             - dbaccess
+    # Acesso exclusivo: mesma imagem do protheus, mesmo volume; APPSERVER_DIR faz
+    # o entrypoint subir o AppServer em /protheus12/bin/appserver-exclusivo
+    # (INI próprio: portas 1235/4322, sem REST). Só o DeskFlow o levanta (Modo
+    # Exclusivo), com o protheus parado.
     protheus-exclusivo:
         image: emebatista/protheus-2610:latest
         platform: linux/amd64
@@ -126,11 +130,9 @@ services:
             - "4322:4322"
         environment:
             - APPSERVER_DATABASE=POSTGRES
+            - APPSERVER_DIR=appserver-exclusivo
         volumes:
-            # Mesmo RPO/protheus_data do protheus; pasta bin própria (INI do
-            # modo exclusivo), vista pelo DeskFlow como bin/appserver-exclusivo.
             - protheus12:/protheus12
-            - protheus12-exclusivo:/protheus12/bin/appserver
             - ./volume/data/system_temp:/protheus12/protheus_data/system_temp
         devices:
             - "/dev/mem:/dev/mem"
@@ -198,7 +200,6 @@ services:
             - ./docker-compose.yml:/opt/protheus/docker-compose.yml:ro
             - ./conf.inf:/opt/protheus/conf.inf:ro
             - protheus12:/protheus12
-            - protheus12-exclusivo:/protheus12/bin/appserver-exclusivo
             - protheus12-license:/protheus12/bin/appserver-license
             - dbaccess-multi:/dbaccess/multi
         networks:
@@ -210,7 +211,6 @@ services:
 volumes:
     pgdata:
     protheus12:
-    protheus12-exclusivo:
     protheus12-license:
     dbaccess-multi:
 
