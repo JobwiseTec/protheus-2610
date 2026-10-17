@@ -76,7 +76,6 @@ cd docker-protheus-2610</pre>
 ├── deskflow/
 │   ├── config.json         ← topologia "Protheus 2610 (Docker)" já configurada
 │   ├── deskflow.ini        ← parâmetros do DeskFlow (licença entra aqui)
-│   └── nginx/deskflow.conf ← proxy da interface web
 └── README.md</pre>
 <div class="box"><p>Não renomeie nem mova os arquivos: o DeskFlow lê o <code>docker-compose.yml</code> e o <code>conf.inf</code> dessa pasta para controlar os containers.</p></div>
 
@@ -87,7 +86,7 @@ cd docker-protheus-2610</pre>
 <pre>docker login</pre></li>
 <li>Suba tudo:
 <pre>docker compose up -d</pre>
-O Docker baixa as sete imagens (~10 GB) e cria o grupo <strong>protheus2610</strong> com os containers <code>postgresql-2610</code>, <code>license-server-2610</code>, <code>dbaccess-2610</code>, <code>protheus-2610</code>, <code>smartview-2610</code>, <code>deskflow-2610</code> e <code>deskflow-web-2610</code>. O container <code>protheus-2610-exclusivo</code> fica cadastrado, mas só sobe quando o DeskFlow ativa o modo exclusivo.</li>
+O Docker baixa as sete imagens (~10 GB) e cria o grupo <strong>protheus2610</strong> com os containers <code>postgresql-2610</code>, <code>license-server-2610</code>, <code>dbaccess-2610</code>, <code>protheus-2610</code>, <code>smartview-2610</code> e <code>deskflow-2610</code> (DeskFlow: interface e backend num único container). O container <code>protheus-2610-exclusivo</code> fica cadastrado, mas só sobe quando o DeskFlow ativa o modo exclusivo.</li>
 <li><strong>Aguarde o banco</strong>. Na primeira subida o Postgres cria a base <code>protheus</code> e restaura o seed 12.1.2610 (203 MB comprimidos → ~2 GB). Leva de 2 a 10 minutos conforme a máquina. Acompanhe no Docker Desktop (container <code>postgresql-2610</code> → Logs) ou com:
 <pre>docker compose logs -f db</pre>
 Está pronto quando aparecer <code>Restore Finished. Base Protheus 12.1.2610 pronta.</code> seguido de <code>PostgreSQL init process complete; ready for start up.</code></li>

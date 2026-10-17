@@ -81,7 +81,7 @@ Este projeto vem preparado para ser operado pelo **DeskFlow Control**, uma ferra
 
 <h3>Já vem no compose</h3>
 
-O DeskFlow faz parte do `docker-compose.yml`: os serviços `deskflow` e `deskflow-web` sobem com os demais no `docker compose up -d`. Ele monta os mesmos volumes que os containers do Protheus (`/protheus12`, `/dbaccess/multi`), por isso INIs, RPO, `console.log` e `dbaccess.ini` são os mesmos arquivos que o AppServer usa — editar INI, promover RPO, aplicar patch e ver log funcionam sobre o ambiente real. A pasta `deskflow/` do repositório guarda a configuração (`config.json` com a topologia pronta, `deskflow.ini`, `nginx/`) e, depois da primeira subida, os dados e a licença; ela fica na sua máquina e sobrevive a recriações dos containers.
+O DeskFlow faz parte do `docker-compose.yml`: o serviço `deskflow` (um único container, `deskflow-2610`, com o nginx da interface e o backend) sobe com os demais no `docker compose up -d`. Ele monta os mesmos volumes que os containers do Protheus (`/protheus12`, `/dbaccess/multi`), por isso INIs, RPO, `console.log` e `dbaccess.ini` são os mesmos arquivos que o AppServer usa — editar INI, promover RPO, aplicar patch e ver log funcionam sobre o ambiente real. A pasta `deskflow/` do repositório guarda a configuração (`config.json` com a topologia pronta, `deskflow.ini`) e, depois da primeira subida, os dados e a licença; ela fica na sua máquina e sobrevive a recriações dos containers.
 
 Primeiro acesso: **http://localhost:8073**, usuário ```admin```, senha ```msadm``` (troque em Configuração → Usuários).
 
