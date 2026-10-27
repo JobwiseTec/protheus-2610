@@ -5,7 +5,7 @@ Protheus 12.1.2610 em containers Docker (Postgres, DBAccess, License Server 3.7.
 
 Procedimentos:
 1. Instalar o <b>Docker</b> ( https://www.docker.com/products/docker-desktop/ ). <b>IMPORTANTE:</b> Se você possui um Mac com chip M1/M2, desabilite no Docker a opção "Use Rosetta for x86_64/amd64 emulation on Apple Silicon", caso contrário os conteiners podem não subir. 
-2. Criar uma pasta e copiar para ela este repositório (botão <b>Code → Download ZIP</b>, ou ```git clone https://github.com/emebatista/docker-protheus-2610.git```). São necessários o <b>docker-compose.yml</b>, o <b>conf.inf</b> e a pasta <b>deskflow/</b> (configuração do DeskFlow Control).
+2. Criar uma pasta e copiar para ela este repositório (botão <b>Code → Download ZIP</b>, ou ```git clone https://github.com/JobwiseTec/protheus-2610.git```). São necessários o <b>docker-compose.yml</b>, o <b>conf.inf</b> e a pasta <b>deskflow/</b> (configuração do DeskFlow Control).
 3. Abrir o terminal dentro dessa pasta e dar os comandos: <br>
 ```docker login``` <br>
 e depois <br>
@@ -14,7 +14,7 @@ No Docker Desktop, o grupo de containers chama-se <b>protheus2610</b> (nome fixo
 4. Abrir o <b>DeskFlow Control</b> em <b>http://localhost:8073</b> (usuário ```admin```, senha ```msadm``` — troque no primeiro acesso). A topologia "Protheus 2610 (Docker)" já vem configurada com os seis serviços; confira por ali que todos os serviços estão Running e use-o para parar, iniciar e reiniciar os serviços daqui em diante — não precisa de `docker compose` no dia a dia.
 5. Acessar o <b>Protheus</b> através do smartclient através na porta <b>1234</b>. O nome do ambiente é <b>P2610</b>. O banco já vem restaurado na imagem; na primeira subida aguarde 1 a 2 minutos (cópia do cluster para o volume e subida do AppServer) antes de entrar. 
 6. Acessar o <b>Protheus WebApp</b> através do navegador do endereço <b>http://localhost:4321</b>.
-7. Usuário: Admin , senha: ```T0tvs@2026``` (senha da release 2610; na 2510 era ```$$T0tvs$$```)
+7. Usuário: Admin , senha: ```@Admin123``` (senha da release 2610; na 2510 era ```$$T0tvs$$```)
 8. Primeiro entre em SIGACFG / Cadastros / Configuração do Tipo de Ambiente -> Definir como "Desenvolvimento"
 9. O SmartView já vem instalado e pré-configurado em uma máquina virtual chamada smartview-2610 com as portas 7017 e 7019 expostas:
     - Para verificar o status do serviço do SmartView: http://localhost:7019/diagnostic
@@ -99,13 +99,13 @@ O banco de dados já vem restaurado dentro da imagem `postgres-2610` (volume `pg
 
 | Imagem | Tag | Conteúdo |
 |---|---|---|
-| `emebatista/postgres-2610` | 1.0.0 / latest | PostgreSQL 15.14 com a base 12.1.2610 já restaurada (encoding WIN1252) |
-| `emebatista/license-server-2610` | 1.0.0 / latest | License Server 3.7.2 |
-| `emebatista/protheus-dbaccess-2610` | 1.0.0 / latest | DBAccess 26.1.0.0 |
-| `emebatista/protheus-2610` | 1.0.0 / latest | AppServer 26.3.0.0, RPO/Lib 12.1.2610 (Lib 20261016), WebApp 26.0.0, compilador do DeskFlow com includes, ambientes P2610 / P2610_COMPILA / P2610_DEBUG; usada também pelo acesso exclusivo |
-| `emebatista/smartview-2610` | 1.0.0 / latest | SmartView 3.11.4 (Agent 3.5.4) |
-| `emebatista/deskflow-2610` | 1.0.0 / latest | DeskFlow Control 3.0.250 com nginx embutido, topologias e licença de demonstração pré-configuradas |
+| `ghcr.io/jobwisetec/postgres-2610` | 1.0.0 / latest | PostgreSQL 15.14 com a base 12.1.2610 já restaurada (encoding WIN1252) |
+| `ghcr.io/jobwisetec/license-server-2610` | 1.0.0 / latest | License Server 3.7.2 |
+| `ghcr.io/jobwisetec/protheus-dbaccess-2610` | 1.0.0 / latest | DBAccess 26.1.0.0 |
+| `ghcr.io/jobwisetec/protheus-2610` | 1.0.0 / latest | AppServer 26.3.0.0, RPO/Lib 12.1.2610 (Lib 20261016), WebApp 26.0.0, compilador do DeskFlow com includes, ambientes P2610 / P2610_COMPILA / P2610_DEBUG; usada também pelo acesso exclusivo |
+| `ghcr.io/jobwisetec/smartview-2610` | 1.0.0 / latest | SmartView 3.11.4 (Agent 3.5.4) |
+| `ghcr.io/jobwisetec/deskflow-2610` | 1.0.0 / latest | DeskFlow Control 3.0.250 com nginx embutido, topologias e licença de demonstração pré-configuradas |
 
-Para atualizar uma instalação existente para as imagens mais recentes: `docker compose pull` seguido de `docker compose up -d` (os volumes nomeados preservam banco, RPO, INIs e a configuração do DeskFlow). Para conferir o que está publicado: https://hub.docker.com/u/emebatista
+Para atualizar uma instalação existente para as imagens mais recentes: `docker compose pull` seguido de `docker compose up -d` (os volumes nomeados preservam banco, RPO, INIs e a configuração do DeskFlow). Para conferir o que está publicado: https://github.com/orgs/jobwisetec/packages
 
 Documentação completa: [guia do usuário em PDF](docs/Guia-Protheus-2610-Docker-DeskFlow.pdf).

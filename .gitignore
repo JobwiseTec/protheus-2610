@@ -6,3 +6,11 @@ deskflow/*.log
 deskflow/authorization.key
 deskflow/.deskflow_instance
 deskflow/deskflow_srv*
+deskflow/scheduler.json
+*.bkp
+__pycache__/
+*.py[cod]
+.env
+patch_dbgate.py
+
+

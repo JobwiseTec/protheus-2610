@@ -10,7 +10,7 @@ name: protheus2610
 
 services:
     db:
-        image: emebatista/postgres-2610:latest
+        image: ghcr.io/jobwisetec/postgres-2610:latest
         container_name: postgresql-2610
         platform: linux/amd64
         user: root
@@ -24,7 +24,7 @@ services:
             - protheus
         restart: always
     license:
-        image: emebatista/license-server-2610:latest
+        image: ghcr.io/jobwisetec/license-server-2610:latest
         container_name: license-server-2610
         platform: linux/amd64
         ports:
@@ -34,11 +34,6 @@ services:
         volumes:
             # Visto pelo DeskFlow como /protheus12/bin/appserver-license.
             - protheus12-license:/protheus12/bin/appserver
-        devices:
-            - "/dev/mem:/dev/mem"
-        cap_add:
-            - sys_rawio
-        privileged: true
         ulimits:
             core:
                 soft: -1
@@ -53,7 +48,7 @@ services:
             - protheus
         restart: always
     dbaccess:
-        image: emebatista/protheus-dbaccess-2610:latest
+        image: ghcr.io/jobwisetec/protheus-dbaccess-2610:latest
         platform: linux/amd64
         container_name: dbaccess-2610
         ports:
@@ -80,7 +75,7 @@ services:
             - db
             - license
     protheus:
-        image: emebatista/protheus-2610:latest
+        image: ghcr.io/jobwisetec/protheus-2610:latest
         platform: linux/amd64
         container_name: protheus-2610
         ports:
@@ -94,11 +89,6 @@ services:
             # primeira subida; o DeskFlow monta o mesmo volume e vê INIs, RPO,
             # protheus_data e console.log pelos mesmos caminhos.
             - protheus12:/protheus12
-        devices:
-            - "/dev/mem:/dev/mem"
-        cap_add:
-            - sys_rawio
-        privileged: true
         ulimits:
             core:
                 soft: -1
@@ -119,7 +109,7 @@ services:
     # (INI próprio: portas 1235/4322, sem REST). Só o DeskFlow o levanta (Modo
     # Exclusivo), com o protheus parado.
     protheus-exclusivo:
-        image: emebatista/protheus-2610:latest
+        image: ghcr.io/jobwisetec/protheus-2610:latest
         platform: linux/amd64
         container_name: protheus-2610-exclusivo
         profiles:
@@ -132,11 +122,6 @@ services:
             - APPSERVER_DIR=appserver-exclusivo
         volumes:
             - protheus12:/protheus12
-        devices:
-            - "/dev/mem:/dev/mem"
-        cap_add:
-            - sys_rawio
-        privileged: true
         ulimits:
             core:
                 soft: -1
@@ -153,7 +138,7 @@ services:
         depends_on:
             - dbaccess
     smartview:
-        image: emebatista/smartview-2610:latest
+        image: ghcr.io/jobwisetec/smartview-2610:latest
         platform: linux/amd64
         container_name: smartview-2610
         ports:
@@ -182,7 +167,7 @@ services:
     # demonstração e desenvolvimento. Em servidor compartilhado, publique a UI
     # só em 127.0.0.1 ou atrás de um proxy com TLS e troque a senha padrão.
     deskflow:
-        image: emebatista/deskflow-2610:latest
+        image: ghcr.io/jobwisetec/deskflow-2610:latest
         platform: linux/amd64
         container_name: deskflow-2610
         pid: host
@@ -191,7 +176,7 @@ services:
         ports:
             - "8073:8073"
         volumes:
-            - /var/run/docker.sock:/var/run/docker.sock
+            - ${DOCKER_SOCK:-/var/run/docker.sock}:/var/run/docker.sock
             # deskflow.ini, config.json (topologia), data/, logs/, licença —
             # ficam na sua pasta e sobrevivem a recriações do container.
             - ./deskflow:/opt/deskflow
